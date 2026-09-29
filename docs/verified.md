@@ -90,6 +90,36 @@ string in `extData`.
 No parameters; each returns a bare boolean. Useful before rendering a recovery or
 sleep screen, since those screens fall back to sample data.
 
+## Health and readiness
+
+The date parameter for these is `dateStr`, formatted `YYYY-MM-DD`.
+
+### `mobile/userHealth/physicalCondition/detailByDate`
+
+Parameter: `dateStr`. The training-status model, and the one health route that returns
+real data without a wearable:
+
+```
+physicalConditionResp.physicalConditionValue    training status (fitness / fatigue)
+physicalConditionResp.physicalConditionScore    0-100
+physicalConditionResp.fitness                   long-term load
+physicalConditionResp.fatigue                   short-term load
+physicalConditionResp.trainingStatus
+physicalConditionParam.trainingStatusScore      and trainingStatusScoreAvg
+```
+
+### `mobile/userHealth/recovery/detailByDate`
+
+Parameter: `dateStr`. Returns `recoveryScoreResp`, `nightHrvResp`,
+`nightRestingHeartRateResp`, `sleepResp`, `muscleLoadResp`. All are empty without a
+device recording overnight HRV and resting heart rate — check
+`mobile/userHealth/mockReport/hasRealRecoveryData` first.
+
+### `mobile/userHealth/sleep`
+
+Parameter: `dateStr`. Returns `sleep` and `targetSleepMin`.
+`mobile/userHealth/sleep/rhythm` is a POST, not a GET.
+
 ## Routes whose parameters are still unknown
 
 Each returns `code` 10 (parameter error) when called bare, so the route exists but
@@ -98,12 +128,13 @@ the parameter names have not been confirmed. Listed so nobody re-derives them:
 ```
 app/userDataStat/boatingSki, boatingSkiStatByDateType, boatingSkiStatDetail
 app/userBody/stat
-mobile/userHealth/recovery/detailByDate
-mobile/userHealth/sleep
-mobile/userHealth/physicalCondition/listDailyDateRange, physicalCondition/detailByDate
+mobile/userHealth/physicalCondition/listDailyDateRange
 mobile/userHealth/calendar/scores
 mobile/userHealth/newIndex/healthDataIndicators
 ```
+
+None of them accept `dateStr`, `startDate`/`endDate`, `startDateStr`/`endDateStr`,
+`beginDateStr`, `monthStr` or `dateType`.
 
 Response field names recovered from the app, which may help identify them:
 
